@@ -1,52 +1,44 @@
 package ru.yandex.practicum.filmorate.controller;
 
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
+import ru.yandex.practicum.filmorate.exception.DuplicatedDataException;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/users")
-
 public class UserController {
     private final Map<Long, User> users = new HashMap<>();
 
     @GetMapping
     public Collection<User> findAll() {
+        log.info("Get list users");
+        log.debug("{}", users.values().toString());
         return users.values();
     }
 
     @PostMapping
-    public User create(@RequestBody User user) {
-        // проверяем выполнение необходимых условий
-        if (user.getEmail() == null || user.getEmail().isBlank()) {
-            throw new ConditionsNotMetException("Имейл должен быть указан");
+    public User create(@Valid @RequestBody User user) {
+        log.info("User creation request: {}", user.toString());
+        if (isDuplicateEmail(user.getEmail())) {
+            throw new DuplicatedDataException("This email is already in use");
         }
-
-        if (users.values().stream().filter(
-                        tempUser -> tempUser
-                                .getEmail()
-                                .equals(user.getEmail()))
-                .findFirst().orElse(null) != null
-        ) {
-            throw new DuplicatedDataException("Этот имейл уже используется");
-        }
-
-        // формируем дополнительные данные
         user.setId(getNextId());
-        user.setRegistrationDate(Instant.now());
-        // сохраняем новую публикацию в памяти приложения
         users.put(user.getId(), user);
+        log.info("User created: {}", user.toString());
         return user;
     }
 
-    // вспомогательный метод для генерации идентификатора нового поста
+    // вспомогательный метод для генерации идентификатора нового пользователя
     private long getNextId() {
         long currentMaxId = users.keySet()
                 .stream()
@@ -57,34 +49,28 @@ public class UserController {
     }
 
     @PutMapping
-    public User update(@RequestBody User newUser) {
-        // проверяем необходимые условия
+    public User update(@Valid @RequestBody User newUser) {
+        log.info("User update request: {}", newUser.toString());
         if (newUser.getId() == null) {
-            throw new ConditionsNotMetException("Id должен быть указан");
+            throw new ConditionsNotMetException("Id must be specified");
         }
+
         if (users.containsKey(newUser.getId())) {
             User oldUser = users.get(newUser.getId());
             if (!oldUser.getEmail().equals(newUser.getEmail())) {
-                if (users.values().stream().filter(
-                                tempUser -> tempUser
-                                        .getEmail()
-                                        .equals(newUser.getEmail()))
-                        .findFirst().orElse(null) != null
-                ) {
-                    throw new DuplicatedDataException("Этот имейл уже используется");
+                if (isDuplicateEmail(newUser.getEmail())) {
+                    throw new DuplicatedDataException("This email is already in use");
                 }
             }
-
-            if (newUser.getEmail() == null || newUser.getPassword() == null) {
-                //throw new ConditionsNotMetException("Описание не может быть пустым");
-                // Оставляем старые учетные данные
-                newUser.setEmail(oldUser.getEmail());
-                newUser.setPassword(oldUser.getPassword());
-            }
-            // если публикация найдена и все условия соблюдены, обновляем её содержимое
-            oldUser = newUser.toBuilder().build();
-            return oldUser;
+            users.put(newUser.getId(), newUser);
+            return newUser;
         }
-        throw new NotFoundException("Пользователь с id = " + newUser.getId() + " не найден");
+        throw new NotFoundException("User id = " + newUser.getId() + " not found");
+    }
+
+    boolean isDuplicateEmail (String email){
+        return users.values().stream()
+                .filter(user -> user.getEmail().equals(email))
+                .findFirst().orElse(null) != null;
     }
 }
