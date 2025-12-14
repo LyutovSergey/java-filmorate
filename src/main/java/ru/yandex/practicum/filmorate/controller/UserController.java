@@ -3,17 +3,20 @@ package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
 import ru.yandex.practicum.filmorate.exception.DuplicatedDataException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-//@Slf4j
+@Slf4j
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -21,21 +24,22 @@ public class UserController {
 
     @GetMapping
     public Collection<User> findAll() {
-  //      log.info("Get list users");
-   //     log.debug("{}", users.values().toString());
+        log.info("Get list users");
+        log.debug("{}", users.values().toString());
         return users.values();
     }
 
     @PostMapping
-    public User create(@Valid @RequestBody User user) {
-     //   log.info("User creation request: {}", user.toString());
+    public ResponseEntity<User> create(@Valid @RequestBody User user) {
+        log.info("User creation request: {}", user.toString());
         if (isDuplicateEmail(user.getEmail())) {
+            log.info("User creation failed! email={} is already in use", user.getEmail());
             throw new DuplicatedDataException("This email is already in use");
         }
         user.setId(getNextId());
         users.put(user.getId(), user);
-      //  log.info("User created: {}", user.toString());
-        return user;
+        log.info("User created!");
+        return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
     // вспомогательный метод для генерации идентификатора нового пользователя
@@ -50,8 +54,9 @@ public class UserController {
 
     @PutMapping
     public User update(@Valid @RequestBody User newUser) {
-       // log.info("User update request: {}", newUser.toString());
+       log.info("User update request: {}", newUser.toString());
         if (newUser.getId() == null) {
+            log.info("User update request failed! Id is null");
             throw new ConditionsNotMetException("Id must be specified");
         }
 
@@ -59,12 +64,15 @@ public class UserController {
             User oldUser = users.get(newUser.getId());
             if (!oldUser.getEmail().equals(newUser.getEmail())) {
                 if (isDuplicateEmail(newUser.getEmail())) {
+                    log.info("User update request failed! email={} is already in use", newUser.getEmail());
                     throw new DuplicatedDataException("This email is already in use");
                 }
             }
             users.put(newUser.getId(), newUser);
+            log.info("User updated!");
             return newUser;
         }
+        log.info("User update request failed! id={} not found", newUser.getId());
         throw new NotFoundException("User id = " + newUser.getId() + " not found");
     }
 

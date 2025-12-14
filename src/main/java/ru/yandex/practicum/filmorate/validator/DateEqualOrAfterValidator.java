@@ -12,7 +12,7 @@ public class DateEqualOrAfterValidator implements ConstraintValidator<DateEqualO
     @Override
     public void initialize(DateEqualOrAfter constraintAnnotation) {
         // Парсим значение параметра аннотации в LocalDate
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         comparisonDate = LocalDate.parse(constraintAnnotation.value(), formatter);
     }
 
