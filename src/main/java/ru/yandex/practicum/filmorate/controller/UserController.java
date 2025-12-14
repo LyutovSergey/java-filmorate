@@ -75,7 +75,7 @@ public class UserController {
         throw new NotFoundException("User id = " + newUser.getId() + " not found");
     }
 
-    boolean isDuplicateEmail (String email){
+    boolean isDuplicateEmail(String email) {
         return users.values().stream()
                 .filter(user -> user.getEmail().equals(email))
                 .findFirst().orElse(null) != null;

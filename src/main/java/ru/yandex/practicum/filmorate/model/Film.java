@@ -5,12 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.validation.annotation.Validated;
 import ru.yandex.practicum.filmorate.validator.DateEqualOrAfter;
 import java.time.LocalDate;
 
-
-@Builder(toBuilder=true)
+@Builder(toBuilder = true)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
