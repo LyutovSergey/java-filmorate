@@ -10,6 +10,10 @@ import java.time.LocalDate;
 import java.util.Collection;
 import static org.junit.jupiter.api.Assertions.*;
 
+/*
+ *  Тестирование полей, валидируемых с помощью validation вроде делать пока не нужно
+ */
+
 class FilmControllerTest {
 
     private FilmController filmController;
@@ -50,10 +54,7 @@ class FilmControllerTest {
 
     @Test
     void update() {
-        // Сначала создаем фильм, чтобы получить ID=1
         filmController.create(validFilm);
-
-        // Создаем объект с обновленными данными
         Film updatedFilm = new Film();
         updatedFilm.setId(1L);
         updatedFilm.setName("Обновленное название");
