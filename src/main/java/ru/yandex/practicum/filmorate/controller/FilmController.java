@@ -16,12 +16,12 @@ import java.util.Map;
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-    private final Map<Long, Film> films = new HashMap<>();
+    protected final Map<Long, Film> films = new HashMap<>();
 
     @GetMapping
     public Collection<Film> findAll() {
         log.info("Get list films");
-        log.debug("{}", films.values().toString());
+        log.debug("{}", films.values());
         return films.values();
     }
 

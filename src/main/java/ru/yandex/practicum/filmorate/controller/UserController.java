@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
 import ru.yandex.practicum.filmorate.exception.DuplicatedDataException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.Collection;
@@ -20,12 +19,12 @@ import java.util.Map;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    private final Map<Long, User> users = new HashMap<>();
+    protected final Map<Long, User> users = new HashMap<>();
 
     @GetMapping
     public Collection<User> findAll() {
         log.info("Get list users");
-        log.debug("{}", users.values().toString());
+        log.debug("{}", users.values());
         return users.values();
     }
 
