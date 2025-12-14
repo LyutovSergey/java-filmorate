@@ -13,7 +13,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-@Slf4j
+//@Slf4j
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -21,20 +21,20 @@ public class UserController {
 
     @GetMapping
     public Collection<User> findAll() {
-        log.info("Get list users");
-        log.debug("{}", users.values().toString());
+  //      log.info("Get list users");
+   //     log.debug("{}", users.values().toString());
         return users.values();
     }
 
     @PostMapping
     public User create(@Valid @RequestBody User user) {
-        log.info("User creation request: {}", user.toString());
+     //   log.info("User creation request: {}", user.toString());
         if (isDuplicateEmail(user.getEmail())) {
             throw new DuplicatedDataException("This email is already in use");
         }
         user.setId(getNextId());
         users.put(user.getId(), user);
-        log.info("User created: {}", user.toString());
+      //  log.info("User created: {}", user.toString());
         return user;
     }
 
@@ -50,7 +50,7 @@ public class UserController {
 
     @PutMapping
     public User update(@Valid @RequestBody User newUser) {
-        log.info("User update request: {}", newUser.toString());
+       // log.info("User update request: {}", newUser.toString());
         if (newUser.getId() == null) {
             throw new ConditionsNotMetException("Id must be specified");
         }
