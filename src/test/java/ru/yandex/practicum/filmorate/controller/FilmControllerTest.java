@@ -34,9 +34,9 @@ class FilmControllerTest {
     void findAll() {
         filmController.create(validFilm);
         Collection<Film> films = filmController.findAll();
-        assertNotNull(films);
-        assertEquals(1, films.size());
-        assertTrue(films.contains(validFilm));
+        assertNotNull(films, "Ошибка при создании фильма");
+        assertEquals(1, films.size(),"Ошибка при создании фильма");
+        assertTrue(films.contains(validFilm),"Ошибка при создании фильма");
     }
 
     @Test
