@@ -34,9 +34,9 @@ class FilmControllerTest {
     void findAll() {
         filmController.create(validFilm);
         Collection<Film> films = filmController.findAll();
-        assertNotNull(films);
-        assertEquals(1, films.size());
-        assertTrue(films.contains(validFilm));
+        assertNotNull(films, "Ошибка при создании фильма");
+        assertEquals(1, films.size(),"Ошибка при создании фильма");
+        assertTrue(films.contains(validFilm),"Ошибка при создании фильма");
     }
 
     @Test
@@ -65,7 +65,7 @@ class FilmControllerTest {
         Film resultFilm = filmController.update(updatedFilm);
         assertEquals(updatedFilm, resultFilm, "Ответ контроллера не соответствует обновленному фильму");
         assertEquals(updatedFilm, filmController.films.get(updatedFilm.getId()), "Значение в контроллере"
-                +" не соответствует обновленному фильму");
+                + " не соответствует обновленному фильму");
     }
 
     @Test
@@ -73,9 +73,10 @@ class FilmControllerTest {
         Film nonExistentFilm = new Film();
         nonExistentFilm.setId(999L);
         NotFoundException exception = assertThrows(NotFoundException.class,
-                () -> {filmController.update(nonExistentFilm);},
-                "Ожидалось исключение " );
-
+                () -> {
+            filmController.update(nonExistentFilm);
+            },
+                "Ожидалось исключение ");
         assertEquals("Film id = 999 not found", exception.getMessage());
     }
 }
