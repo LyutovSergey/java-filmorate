@@ -85,9 +85,10 @@ class UserControllerTest {
     void testAddUserWithDuplicateEmail() {
         userController.create(validUser);
         DuplicatedDataException exception = assertThrows(DuplicatedDataException.class,
-                () -> {userController.create(validUser);},
+                () -> {
+                    userController.create(validUser);
+                    },
                 "Ожидалось исключение");
-
         assertEquals("This email is already in use", exception.getMessage());
     }
 }

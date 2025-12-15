@@ -73,9 +73,10 @@ class FilmControllerTest {
         Film nonExistentFilm = new Film();
         nonExistentFilm.setId(999L);
         NotFoundException exception = assertThrows(NotFoundException.class,
-                () -> {filmController.update(nonExistentFilm);},
-                "Ожидалось исключение " );
-
+                () -> {
+            filmController.update(nonExistentFilm);
+            } ,
+                "Ожидалось исключение ");
         assertEquals("Film id = 999 not found", exception.getMessage());
     }
 }
