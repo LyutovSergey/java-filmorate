@@ -67,7 +67,7 @@ class UserControllerTest {
         User resultUser = userController.update(updatedUser);
         assertEquals(updatedUser, resultUser, "Ответ контроллера не соответствует обновленному пользователю");
         assertEquals(updatedUser, userController.users.get(updatedUser.getId()), "Значение в контроллере"
-                +" не соответствует обновленному пользователю");
+                + " не соответствует обновленному пользователю");
     }
 
     @Test

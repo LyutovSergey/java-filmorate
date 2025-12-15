@@ -65,7 +65,7 @@ class FilmControllerTest {
         Film resultFilm = filmController.update(updatedFilm);
         assertEquals(updatedFilm, resultFilm, "Ответ контроллера не соответствует обновленному фильму");
         assertEquals(updatedFilm, filmController.films.get(updatedFilm.getId()), "Значение в контроллере"
-                +" не соответствует обновленному фильму");
+                + " не соответствует обновленному фильму");
     }
 
     @Test
@@ -75,7 +75,7 @@ class FilmControllerTest {
         NotFoundException exception = assertThrows(NotFoundException.class,
                 () -> {
             filmController.update(nonExistentFilm);
-            } ,
+            },
                 "Ожидалось исключение ");
         assertEquals("Film id = 999 not found", exception.getMessage());
     }
