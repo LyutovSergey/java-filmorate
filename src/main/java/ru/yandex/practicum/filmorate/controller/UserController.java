@@ -35,6 +35,9 @@ public class UserController {
             log.info("User creation failed! email={} is already in use", user.getEmail());
             throw new DuplicatedDataException("This email is already in use");
         }
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+        }
         user.setId(getNextId());
         users.put(user.getId(), user);
         log.info("User created!");
@@ -66,6 +69,9 @@ public class UserController {
                     log.info("User update request failed! email={} is already in use", newUser.getEmail());
                     throw new DuplicatedDataException("This email is already in use");
                 }
+            }
+            if (newUser.getName() == null || newUser.getName().isBlank()) {
+                newUser.setName(newUser.getLogin());
             }
             users.put(newUser.getId(), newUser);
             log.info("User updated!");
