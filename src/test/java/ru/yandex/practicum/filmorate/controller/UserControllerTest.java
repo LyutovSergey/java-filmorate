@@ -75,8 +75,10 @@ class UserControllerTest {
         User nonExistentUser = new User();
         nonExistentUser.setId(999L);
         NotFoundException exception = assertThrows(NotFoundException.class,
-                () -> {userController.update(nonExistentUser);},
-                "Ожидалось исключение " );
+                () -> {
+            userController.update(nonExistentUser);
+            },
+                "Ожидалось исключение ");
 
         assertEquals("User id = 999 not found", exception.getMessage());
     }
