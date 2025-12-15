@@ -20,12 +20,18 @@ public class User {
     @Email(message = "email некорректный")
     private String email;
 
-    @NotNull(message = "login не может быть null")
     @NotBlank(message = "login не может быть пустым")
     private String login;
 
     private String name;
 
     @Past(message = "birthday не может быть из будущего")
+    @NotNull(message = "birthday не может быть null")
     private LocalDate birthday;
+
+    public void calculateUserName() {
+        if (name == null || name.isBlank()) {
+            name = login;
+        }
+    }
 }

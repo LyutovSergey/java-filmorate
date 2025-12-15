@@ -56,7 +56,7 @@ public class FilmController {
             log.info("Film updated!");
             return newFilm;
         }
-        log.info("Film update request failed! id={} not found", newFilm.getId());
+        log.info("Film update request failed! id = {} not found", newFilm.getId());
         throw new NotFoundException("Film id = " + newFilm.getId() + " not found");
     }
 }
