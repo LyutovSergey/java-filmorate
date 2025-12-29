@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.yandex.practicum.filmorate.validator.DateEqualOrAfter;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Builder(toBuilder = true)
 @Data
@@ -27,4 +28,7 @@ public class Film {
 
     @Positive(message = "duration не может быть отрицательным")
     private int duration; // Судя по коллекции, предполагалось использовать именно числовое значение
+
+    Set<Long> UserLikes;
+
 }
