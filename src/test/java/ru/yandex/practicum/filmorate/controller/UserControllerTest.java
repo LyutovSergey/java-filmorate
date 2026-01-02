@@ -1,15 +1,11 @@
 package ru.yandex.practicum.filmorate.controller;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import ru.yandex.practicum.filmorate.exception.DuplicatedDataException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.IdGenerator;
-import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorageImpl;
 import ru.yandex.practicum.filmorate.storage.InMemoryUserStorageImpl;
 
 import java.time.LocalDate;
@@ -28,7 +24,7 @@ class UserControllerTest {
     @BeforeEach
     public void setUp() {
         // Инициализируем новый контроллер для каждого теста, чтобы изолировать состояние (Map films)
-        userController = new UserController(new UserService( new InMemoryUserStorageImpl( new IdGenerator())));
+        userController = new UserController(new UserService(new InMemoryUserStorageImpl(new IdGenerator())));
         validUser = new User();
         validUser.setEmail("test@test.ru");
         validUser.setLogin("логин");

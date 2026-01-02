@@ -24,7 +24,6 @@ public class FilmController {
     @GetMapping
     public Collection<Film> findAll() {
         log.info("Get list films");
-        //log.debug("{}", films.values());
         return filmService.findAll();
     }
 

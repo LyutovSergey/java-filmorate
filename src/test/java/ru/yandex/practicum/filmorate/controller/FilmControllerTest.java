@@ -2,13 +2,10 @@ package ru.yandex.practicum.filmorate.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.*;
-
 import java.time.LocalDate;
 import java.util.Collection;
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,8 +23,8 @@ class FilmControllerTest {
     @BeforeEach
     public void setUp() {
         // Инициализируем новый контроллер для каждого теста, чтобы изолировать состояние (Map films)
-        filmController = new FilmController(new FilmService( new InMemoryFilmStorageImpl(new IdGenerator()),
-                new InMemoryUserStorageImpl( new IdGenerator())));
+        filmController = new FilmController(new FilmService(new InMemoryFilmStorageImpl(new IdGenerator()),
+                new InMemoryUserStorageImpl(new IdGenerator())));
         validFilm = new Film();
         validFilm.setName("Название");
         validFilm.setDescription("Описание");
