@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
@@ -20,7 +18,7 @@ import java.util.List;
 @RequestMapping("/films")
 public class FilmController {
 
-    private FilmService filmService;
+    private final FilmService filmService;
 
     public FilmController(@Autowired FilmService filmService) {
         this.filmService = filmService;
@@ -28,40 +26,45 @@ public class FilmController {
 
     @GetMapping
     public Collection<Film> findAll() {
-        //log.info("Get list films");
+        log.info("Get list films");
         //log.debug("{}", films.values());
         return filmService.findAll() ;
     }
 
     @PostMapping
-    public ResponseEntity<Film> create(@Valid @RequestBody Film film) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public Film create(@Valid @RequestBody Film film) {
         log.info("Film creation request: {}", film.toString());
-        Film newFilm = filmService.create(film);
-        return new ResponseEntity<>(newFilm, HttpStatus.CREATED);
+        return filmService.create(film);
     }
 
     @PutMapping
+    @ResponseStatus(HttpStatus.OK)
     public Film update(@Valid @RequestBody Film newFilm) {
         log.info("Film update request: {}", newFilm.toString());
         return filmService.update(newFilm);
     }
 
-    @PutMapping("/{id}/like/{userId}")
-    public void likeFilm(@PathVariable Long id, @PathVariable Long userId) {
+    @PutMapping("/{filmId}/like/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void likeFilm(@PathVariable Long filmId, @PathVariable Long userId) {
         // Логика добавления лайка к фильму от пользователя
+        filmService.likeFilm(filmId, userId);
 
     }
 
-    @DeleteMapping("/{id}/like/{userId}")
-    public void unlikeFilm(@PathVariable Long id, @PathVariable Long userId) {
+    @DeleteMapping("/{filmId}/like/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void unlikeFilm(@PathVariable Long filmId, @PathVariable Long userId) {
         // Логика удаления лайка с фильма у пользователя
+        filmService.unlikeFilm(filmId, userId);
     }
 
     @GetMapping("/popular")
+    @ResponseStatus(HttpStatus.OK)
     public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") Integer count) {
-        // Логика возврата списка популярных фильмов по количеству лайков
-        // Если значение count не задано, по умолчанию возвращается 10 фильмов
-        return new ArrayList<>(); // Замените на реальную реализацию
+
+        return filmService.getPopularFilms(count);
     }
 
 }

@@ -1,54 +1,55 @@
 package ru.yandex.practicum.filmorate.storage;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 @Repository
 public class InMemoryFilmStorageImpl implements FilmStorage {
 
-    protected final Map<Long, Film> films = new HashMap<>();
+    private final Map<Long, Film> films = new HashMap<>();
+    private final IdGenerator idGenerator;
 
-
-    @Override
-    public Film create(Film film) {
-        film.setId(getNextId());
-        films.put(film.getId(), film);
-        return film.toBuilder().build();
+    public InMemoryFilmStorageImpl(IdGenerator idGenerator) {
+        this.idGenerator = idGenerator;
     }
 
     @Override
-    public Film update(Film newFilm ){
-        if (newFilm.getId() == null) {
+    public Film create(Film film) {
+        Film newFilm = film.toBuilder().build();
+        newFilm.setId(idGenerator.getNextId());
+        films.put(newFilm.getId(), newFilm);
+        return newFilm.toBuilder().build();
+    }
+
+    @Override
+    public Film update(Film film){
+        if (film.getId() == null) {
             throw new ConditionsNotMetException("Id must be specified");
         }
-        if (films.containsKey(newFilm.getId())) {
+        if (films.containsKey(film.getId())) {
+            Film newFilm = film.toBuilder().build();
             films.put(newFilm.getId(), newFilm);
             return newFilm.toBuilder().build();
         }
-        throw new NotFoundException("Film id = " + newFilm.getId() + " not found");
+        throw new NotFoundException("Film id = " + film.getId() + " not found");
     }
 
     @Override
     public Collection<Film> findAll() {
-
-        return films.values();
-
+        return films.values().stream()
+                .map(film -> film.toBuilder().build())
+                .toList();
     }
 
-    private long getNextId() {
-        long currentMaxId = films.keySet()
-                .stream()
-                .mapToLong(id -> id)
-                .max()
-                .orElse(0);
-        return ++currentMaxId;
+    @Override
+    public Optional<Film> getById(Long id){
+        return Optional.ofNullable(films.get(id))
+                .map(f -> f.toBuilder().build());
     }
+
+
 }
