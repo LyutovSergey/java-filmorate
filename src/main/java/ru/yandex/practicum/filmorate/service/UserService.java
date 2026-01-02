@@ -18,7 +18,7 @@ public class UserService {
         return userStorage.update(newUser);
     }
 
-    public User create (User user) {
+    public User create(User user) {
         return userStorage.create(user);
     }
 
@@ -67,9 +67,9 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundException("User id = " + userId + " not found"));
         User otherUser = userStorage.getById(otherUserId)
                 .orElseThrow(() -> new NotFoundException("User id = " + userId + " not found"));
-        Set<Long> CommonFriendsId = new HashSet<>(user.getFriendsId());
-        CommonFriendsId.retainAll(otherUser.getFriendsId());
-        return CommonFriendsId.stream()
+        Set<Long> commonFriendsId = new HashSet<>(user.getFriendsId());
+        commonFriendsId.retainAll(otherUser.getFriendsId());
+        return commonFriendsId.stream()
                 .map(friendId -> userStorage.getById(friendId)
                         .orElseThrow(() -> new NotFoundException("User friend id = " + userId + " not found")))
                 .toList();

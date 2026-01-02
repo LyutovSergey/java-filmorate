@@ -1,16 +1,11 @@
 package ru.yandex.practicum.filmorate.storage;
 
-import lombok.extern.log4j.Log4j;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
 import ru.yandex.practicum.filmorate.exception.DuplicatedDataException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
-
 import java.util.*;
 
 @Slf4j
@@ -53,7 +48,7 @@ public class InMemoryUserStorageImpl implements UserStorage {
                     throw new DuplicatedDataException("This email is already in use");
                 }
             }
-            User newUser= user.toBuilder().build();
+            User newUser = user.toBuilder().build();
             newUser.calculateUserName();
             users.put(newUser.getId(), newUser);
             log.info("User updated!");

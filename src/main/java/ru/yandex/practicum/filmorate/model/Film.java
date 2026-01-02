@@ -30,7 +30,7 @@ public class Film {
     @Positive(message = "duration не может быть отрицательным")
     private int duration; // Судя по коллекции, предполагалось использовать именно числовое значение
 
-    Set<Long> userIdLikes = new HashSet<>();
+    private  final Set<Long> userIdLikes = new HashSet<>();
 
     public void addUserLike(Long userId) {
         userIdLikes.add(userId);

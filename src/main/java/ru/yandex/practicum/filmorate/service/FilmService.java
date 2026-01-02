@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 import java.util.Collection;
@@ -18,11 +17,11 @@ public class FilmService {
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
 
-    public Film update( Film newFilm) {
+    public Film update(Film newFilm) {
         return filmStorage.update(newFilm);
     }
 
-    public Film create (Film film) {
+    public Film create(Film film) {
         return filmStorage.create(film);
     }
 

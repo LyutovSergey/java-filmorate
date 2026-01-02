@@ -29,7 +29,7 @@ public class User {
     @NotNull(message = "birthday не может быть null")
     private LocalDate birthday;
 
-    private Set<Long> friendsId = new HashSet<>();
+    private final Set<Long> friendsId = new HashSet<>();
 
     public void calculateUserName() {
         if (name == null || name.isBlank()) {

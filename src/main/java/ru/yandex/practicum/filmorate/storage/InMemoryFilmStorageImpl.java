@@ -26,7 +26,7 @@ public class InMemoryFilmStorageImpl implements FilmStorage {
     }
 
     @Override
-    public Film update(Film film){
+    public Film update(Film film) {
         if (film.getId() == null) {
             throw new ConditionsNotMetException("Id must be specified");
         }
@@ -46,7 +46,7 @@ public class InMemoryFilmStorageImpl implements FilmStorage {
     }
 
     @Override
-    public Optional<Film> getById(Long id){
+    public Optional<Film> getById(Long id) {
         return Optional.ofNullable(films.get(id))
                 .map(f -> f.toBuilder().build());
     }
