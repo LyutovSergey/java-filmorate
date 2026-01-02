@@ -25,7 +25,7 @@ public class InMemoryUserStorageImpl implements UserStorage {
             log.info("User creation failed! email={} is already in use", user.getEmail());
             throw new DuplicatedDataException("This email is already in use");
         }
-        User newUser = user.toBuilder().build();
+        User newUser = user.toBuilder().build(); // решил делать двойной build для выполнения неизменяемости данных
         newUser.calculateUserName();
         newUser.setId(idGenerator.getNextId());
         users.put(newUser.getId(), newUser);

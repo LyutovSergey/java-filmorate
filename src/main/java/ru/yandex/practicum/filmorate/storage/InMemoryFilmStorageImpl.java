@@ -19,7 +19,7 @@ public class InMemoryFilmStorageImpl implements FilmStorage {
 
     @Override
     public Film create(Film film) {
-        Film newFilm = film.toBuilder().build();
+        Film newFilm = film.toBuilder().build(); // решил делать двойной build для выполнения неизменяемости данных
         newFilm.setId(idGenerator.getNextId());
         films.put(newFilm.getId(), newFilm);
         return newFilm.toBuilder().build();
