@@ -1,11 +1,12 @@
 package ru.yandex.practicum.filmorate.controller;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import ru.yandex.practicum.filmorate.exception.DuplicatedDataException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.IdGenerator;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorageImpl;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -23,7 +24,7 @@ class UserControllerTest {
     @BeforeEach
     public void setUp() {
         // Инициализируем новый контроллер для каждого теста, чтобы изолировать состояние (Map films)
-        userController = new UserController();
+        userController = new UserController(new UserService(new InMemoryUserStorageImpl(new IdGenerator())));
         validUser = new User();
         validUser.setEmail("test@test.ru");
         validUser.setLogin("логин");
@@ -37,20 +38,20 @@ class UserControllerTest {
         Collection<User> users = userController.findAll();
         assertNotNull(users, "Ошибка при создании пользователя");
         assertEquals(1, users.size(), "Ошибка при создании пользователя");
+        validUser.setId(1L);
         assertTrue(users.contains(validUser), "Ошибка при создании пользователя");
     }
 
     @Test
     void create() {
         //Создание валидного объекта
-        ResponseEntity<User> response = userController.create(validUser);
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(1L, response.getBody().getId());
-        assertEquals("test@test.ru", response.getBody().getEmail(), "Email не соответствует ожидаемому");
-        assertEquals("логин", response.getBody().getLogin(), "Login не соответствует ожидаемому");
-        assertEquals("Имя", response.getBody().getName(), "Name не соответствует ожидаемому");
-        assertEquals("2000-01-01", response.getBody().getBirthday().toString(), "Birthday не соответствует ожидаемому");
+        User response = userController.create(validUser);
+        assertNotNull(response);
+        assertEquals(1L, response.getId());
+        assertEquals("test@test.ru", response.getEmail(), "Email не соответствует ожидаемому");
+        assertEquals("логин", response.getLogin(), "Login не соответствует ожидаемому");
+        assertEquals("Имя", response.getName(), "Name не соответствует ожидаемому");
+        assertEquals("2000-01-01", response.getBirthday().toString(), "Birthday не соответствует ожидаемому");
     }
 
     @Test
@@ -65,8 +66,7 @@ class UserControllerTest {
 
         User resultUser = userController.update(updatedUser);
         assertEquals(updatedUser, resultUser, "Ответ контроллера не соответствует обновленному пользователю");
-        assertEquals(updatedUser, userController.users.get(updatedUser.getId()), "Значение в контроллере"
-                + " не соответствует обновленному пользователю");
+
     }
 
     @Test
