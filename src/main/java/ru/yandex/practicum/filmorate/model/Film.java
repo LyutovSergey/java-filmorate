@@ -30,6 +30,7 @@ public class Film {
     @Positive(message = "duration не может быть отрицательным")
     private int duration; // Судя по коллекции, предполагалось использовать именно числовое значение
 
+    @Builder.Default
     private Set<Long> userIdLikes = new HashSet<>();
 
     public void addUserLike(Long userId) {
@@ -40,4 +41,9 @@ public class Film {
         userIdLikes.remove(userId);
     }
 
+    public Film copy() {
+        return this.toBuilder()
+                .userIdLikes(new HashSet<>(this.userIdLikes))
+                .build();
+    }
 }

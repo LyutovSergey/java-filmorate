@@ -15,4 +15,5 @@ public interface FilmStorage {
 
     Collection<Film> findAll();
 
+    boolean isFilmIdRegistered(Long filmId);
 }

@@ -29,6 +29,7 @@ public class User {
     @NotNull(message = "birthday не может быть null")
     private LocalDate birthday;
 
+    @Builder.Default
     private  Set<Long> friendsId = new HashSet<>();
 
     public void calculateUserName() {
@@ -45,4 +46,9 @@ public class User {
         friendsId.remove(userId);
     }
 
+    public User copy() {
+        return this.toBuilder()
+                .friendsId(new HashSet<>(this.friendsId))
+                .build();
+    }
 }

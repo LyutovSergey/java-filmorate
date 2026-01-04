@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
@@ -18,6 +19,14 @@ public class FilmService {
     private final UserStorage userStorage;
 
     public Film update(Film newFilm) {
+        if (newFilm.getId() == null) {
+            throw new ConditionsNotMetException("Id must be specified");
+        }
+
+        if (!filmStorage.isFilmIdRegistered(newFilm.getId())) {
+            throw new NotFoundException("Film id = " + newFilm.getId() + " not found");
+        }
+
         return filmStorage.update(newFilm);
     }
 
@@ -30,29 +39,38 @@ public class FilmService {
     }
 
     public void likeFilm(Long filmId, Long userId) {
-        Film film = getFilmAndValidateUser(filmId, userId);
-        film.addUserLike(userId);
-        filmStorage.update(film);
+        Film film = getFilmByIdOrThrow(filmId);
+        if (userStorage.isUserIdRegistered(userId)) {
+            film.addUserLike(userId);
+            filmStorage.update(film);
+        } else  {
+            throw new NotFoundException("User id = " + userId + " not found");
+        }
+
     }
 
     public void unlikeFilm(Long filmId, Long userId) {
-        Film film = getFilmAndValidateUser(filmId, userId);
-        film.removeUserLike(userId);
-        filmStorage.update(film);
-    }
-
-    private Film getFilmAndValidateUser(Long filmId, Long userId) {
-        if (userStorage.getById(userId).isEmpty()) {
+        Film film = getFilmByIdOrThrow(filmId);
+        if (userStorage.isUserIdRegistered(userId)) {
+            film.removeUserLike(userId);
+            filmStorage.update(film);
+        } else  {
             throw new NotFoundException("User id = " + userId + " not found");
         }
-        return filmStorage.getById(filmId)
-                .orElseThrow(() -> new NotFoundException("Film id = " + filmId + " not found"));
     }
 
-        public List<Film> getPopularFilms(Integer count) {
+    public List<Film> getPopularFilms(Integer count) {
+        if (count < 1) {
+            throw new ConditionsNotMetException("Count must be greater than 0");
+        }
         return filmStorage.findAll().stream()
                 .sorted(Comparator.comparingInt((Film film) -> film.getUserIdLikes().size()).reversed())
                 .limit(count)
                 .toList();
+    }
+
+    private Film getFilmByIdOrThrow(Long filmId) {
+        return filmStorage.getById(filmId)
+                .orElseThrow(() -> new NotFoundException("Film id = " + filmId + " not found"));
     }
 }

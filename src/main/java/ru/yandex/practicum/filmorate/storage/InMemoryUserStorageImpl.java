@@ -2,9 +2,6 @@ package ru.yandex.practicum.filmorate.storage;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
-import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
-import ru.yandex.practicum.filmorate.exception.DuplicatedDataException;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import java.util.*;
 
@@ -21,62 +18,47 @@ public class InMemoryUserStorageImpl implements UserStorage {
 
     @Override
     public User create(User user) {
-        if (isDuplicateEmail(user.getEmail())) {
-            log.info("User creation failed! email={} is already in use", user.getEmail());
-            throw new DuplicatedDataException("This email is already in use");
-        }
-        User newUser = user.toBuilder().build(); // решил делать двойной build для выполнения неизменяемости данных
+
+        User newUser = user.copy(); // решил заменить build на внутренний метод чтобы копировать коллекцию
         newUser.calculateUserName();
         newUser.setId(idGenerator.getNextId());
         users.put(newUser.getId(), newUser);
         log.info("User created!");
-        return newUser.toBuilder().build();
+        return newUser.copy();
     }
 
     @Override
     public User update(User user) {
-        if (user.getId() == null) {
-            log.info("User update request failed! Id is null");
-            throw new ConditionsNotMetException("Id must be specified");
-        }
-
-        if (users.containsKey(user.getId())) {
-            User oldUser = users.get(user.getId());
-            if (!oldUser.getEmail().equals(user.getEmail())) {
-                if (isDuplicateEmail(user.getEmail())) {
-                    log.info("User update request failed! email={} is already in use", user.getEmail());
-                    throw new DuplicatedDataException("This email is already in use");
-                }
-            }
-            User newUser = user.toBuilder().build();
+            User newUser = user.copy();
             newUser.calculateUserName();
             users.put(newUser.getId(), newUser);
             log.info("User updated!");
-            return newUser.toBuilder().build();
-        }
-        log.info("User update request failed! id={} not found", user.getId());
-        throw new NotFoundException("User id = " + user.getId() + " not found");
-
+            return newUser.copy();
     }
 
     @Override
     public Optional<User> getById(Long id) {
         return Optional.ofNullable(users.get(id))
-                .map(f -> f.toBuilder().build());
+                .map(User::copy);
     }
 
     @Override
     public Collection<User> findAll() {
         log.debug("{}", users.values());
         return users.values().stream()
-                .map(user -> user.toBuilder().build())
+                .map(User::copy)
                 .toList();
     }
 
-    boolean isDuplicateEmail(String email) {
+    @Override
+    public boolean isEmailRegistered(String email) {
         return users.values().stream()
                 .filter(user -> user.getEmail().equals(email))
                 .findFirst().orElse(null) != null;
     }
 
+    @Override
+    public boolean isUserIdRegistered(Long userId) {
+        return users.containsKey(userId);
+    }
 }

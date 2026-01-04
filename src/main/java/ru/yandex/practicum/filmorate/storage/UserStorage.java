@@ -14,5 +14,9 @@ public interface UserStorage {
 
     Collection<User> findAll();
 
+    // Методы в хранилище для оптимизации выполнения программы
+    boolean isEmailRegistered(String email);
+
+    boolean isUserIdRegistered(Long userId);
 }
 

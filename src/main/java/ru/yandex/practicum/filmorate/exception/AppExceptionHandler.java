@@ -39,7 +39,7 @@ public class AppExceptionHandler {
     @ExceptionHandler
     @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
     public Map<String, String> defaultHandler(Exception e) {
-        log.error("Произошла ошибка: {}", e.getMessage());
+        log.error("Произошла ошибка: {}, {}", e.toString(), e.getClass());
         return Map.of("error", "Не удалось обработать!");
     }
 }
