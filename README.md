@@ -93,3 +93,11 @@ JOIN users owner ON f.user_id = owner.id
 WHERE owner.login = 'Ivanov' 
   AND f.is_confirmed = TRUE;
 ```
+### Список фильмов с жанром Комедия
+```sql
+SELECT *
+FROM films f
+JOIN film_genres fg ON f.id = fg.film_id
+JOIN genres g ON fg.genre_id = g.id
+WHERE g.name = 'Комедия';
+```
