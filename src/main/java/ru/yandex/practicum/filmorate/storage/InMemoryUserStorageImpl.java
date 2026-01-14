@@ -7,7 +7,8 @@ import java.util.*;
 
 @Slf4j
 @Repository
-public class InMemoryUserStorageImpl implements UserStorage {
+public class
+InMemoryUserStorageImpl implements UserStorage {
 
     protected final Map<Long, User> users = new HashMap<>();
     private final IdGenerator idGenerator;
