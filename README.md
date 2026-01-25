@@ -13,7 +13,7 @@
 *   **mpa_rating**:  справочник MPA рейтингов
 ## DBML
 ```sql
-Table user {
+Table user_app {
   id bigint [pk, increment]
   login varchar(255) [not null, unique]
   name varchar(255)
@@ -67,10 +67,10 @@ Table film_like {
 }
 
 // СВЯЗИ
-Ref: friend.user_id > user.id [delete: cascade]
-Ref: friend.friend_user_id > user.id [delete: cascade]
+Ref: friend.user_id > user_app.id [delete: cascade]
+Ref: friend.friend_user_id > user_app.id [delete: cascade]
 Ref: film_like.film_id > film.id [delete: cascade]
-Ref: film_like.user_id > user.id [delete: cascade]
+Ref: film_like.user_id > user_app.id [delete: cascade]
 Ref: film_genre.film_id > film.id [delete: cascade]
 Ref: film_genre.genre_id > genre.id [delete: restrict] // Не даем удалить жанр, если он нужен фильму
 Ref: film.mpa_rating_id > mpa_rating.id [delete: restrict]

@@ -1,13 +1,15 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.storage.user;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Primary;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.common.IdGenerator;
+
 import java.util.*;
 
 @Slf4j
-@Repository
+@Repository("inMemoryUserStorageImpl")
 public class
 InMemoryUserStorageImpl implements UserStorage {
 

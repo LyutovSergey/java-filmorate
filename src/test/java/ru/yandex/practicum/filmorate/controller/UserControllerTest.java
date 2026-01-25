@@ -5,8 +5,8 @@ import ru.yandex.practicum.filmorate.exception.DuplicatedDataException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.IdGenerator;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorageImpl;
+import ru.yandex.practicum.filmorate.storage.common.IdGenerator;
+import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorageImpl;
 
 import java.time.LocalDate;
 import java.util.Collection;
