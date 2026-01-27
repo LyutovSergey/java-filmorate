@@ -44,7 +44,7 @@ public class UserDbStorage extends CommonDbStorage<User> implements UserStorage 
 
     @Override
     public User create(User user) {
-        long id= insertInDb(ADD_USER_QUERY, user.getEmail(), user.getLogin(), user.getName(), user.getBirthday());
+        long id = insertInDb(ADD_USER_QUERY, user.getEmail(), user.getLogin(), user.getName(), user.getBirthday());
         updateFriends( user, new User());
         return findOneInDb(FIND_BY_ID_QUERY, id).orElse(null);
     }

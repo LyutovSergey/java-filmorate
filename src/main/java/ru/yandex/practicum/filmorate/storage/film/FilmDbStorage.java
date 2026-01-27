@@ -36,10 +36,13 @@ public class FilmDbStorage extends CommonDbStorage<Film>  implements FilmStorage
 ) l_agg ON f.id = l_agg.film_id
 """;
     private static final String FIND_BY_ID_QUERY = FIND_ALL_QUERY + " WHERE f.id = ?";
-    private static final String ADD_USER_QUERY ="";
+    private static final String ADD_FILM_QUERY =  """
+            INSERT INTO film (name, description, release_date, duration_in_ms, mpa_rating_id)
+            VALUES (?, ?, ?, ?, ?)
+            """;
     private static final String UPDATE_FILM_QUERY = """
-            UPDATE film 
-            SET name = ?, description = ?, release_date = ?, duration_in_ms = ?, mpa_rating_id = ? 
+            UPDATE film
+            SET name = ?, description = ?, release_date = ?, duration_in_ms = ?, mpa_rating_id = ?
             WHERE id = ?
             """;
     private static final String DEL_LIKES_QUERY = "DELETE FROM film_like WHERE film_id = ?";
@@ -54,7 +57,16 @@ public class FilmDbStorage extends CommonDbStorage<Film>  implements FilmStorage
 
     @Override
     public Film create(Film film) {
-        return null;
+        long id = insertInDb (ADD_FILM_QUERY,
+                film.getName(),
+                film.getDescription(),
+                film.getReleaseDate(),
+                film.getDuration(),
+                film.getMpa().getId());
+        film.setId(id);
+        updateLikes(film);
+        updateGenres(film);
+        return findOneInDb(FIND_BY_ID_QUERY, id).get();
     }
 
     @Override
@@ -67,6 +79,7 @@ public class FilmDbStorage extends CommonDbStorage<Film>  implements FilmStorage
                 film.getMpa().getId(),
                 film.getId());
         updateLikes(film);
+        updateGenres(film);
         return findOneInDb(FIND_BY_ID_QUERY, film.getId()).get();
     }
 
@@ -88,14 +101,14 @@ public class FilmDbStorage extends CommonDbStorage<Film>  implements FilmStorage
     private void updateLikes(Film film){
         deleteInDb(DEL_LIKES_QUERY, film.getId());
         for(long idUser:film.getUserIdLikes()) {
-            insertInDb(ADD_LIKE_QUERY, film.getId(), idUser);
+            updateInDb(ADD_LIKE_QUERY, film.getId(), idUser);
         }
     }
 
     private void updateGenres(Film film){
         deleteInDb(DEL_GENRES_QUERY, film.getId());
         for(Genre genre:film.getGenres()) {
-            insertInDb(ADD_GENRE_QUERY, film.getId(), genre.getId());
+            updateInDb(ADD_GENRE_QUERY, film.getId(), genre.getId());
         }
     }
 }
