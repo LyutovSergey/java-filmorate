@@ -28,10 +28,16 @@ public class Film {
     private LocalDate releaseDate;
 
     @Positive(message = "duration не может быть отрицательным")
-    private int duration; // Судя по коллекции, предполагалось использовать именно числовое значение
+    private Long duration; // Судя по коллекции, предполагалось использовать именно числовое значение
 
     @Builder.Default
     private Set<Long> userIdLikes = new HashSet<>();
+
+    @NotNull
+    private Mpa mpa;
+
+    @Builder.Default
+    private Set<Genre> genres = new HashSet<>();
 
     public void addUserLike(Long userId) {
         userIdLikes.add(userId);
@@ -44,6 +50,7 @@ public class Film {
     public Film copy() {
         return this.toBuilder()
                 .userIdLikes(new HashSet<>(this.userIdLikes))
+                .genres(new HashSet<>(this.genres))
                 .build();
     }
 }

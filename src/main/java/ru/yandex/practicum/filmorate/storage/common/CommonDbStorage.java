@@ -64,4 +64,5 @@ public abstract class CommonDbStorage<T> {
             throw new NotFoundException("Данные для обновления не найдены");
         }
     }
+
 }
