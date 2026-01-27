@@ -44,39 +44,39 @@ public class UserDbStorage extends CommonDbStorage<User> implements UserStorage 
 
     @Override
     public User create(User user) {
-        long id= insert(ADD_USER_QUERY, user.getEmail(), user.getLogin(), user.getName(), user.getBirthday());
+        long id= insertInDb(ADD_USER_QUERY, user.getEmail(), user.getLogin(), user.getName(), user.getBirthday());
         updateFriends( user, new User());
-        return findOne(FIND_BY_ID_QUERY, id).orElse(null);
+        return findOneInDb(FIND_BY_ID_QUERY, id).orElse(null);
     }
 
     @Override
     public User update(User user) {
 
-        User oldUser = findOne(FIND_BY_ID_QUERY, user.getId()).get();
+        User oldUser = findOneInDb(FIND_BY_ID_QUERY, user.getId()).get();
 
-        update(UPDATE_USER_QUERY, user.getEmail(), user.getLogin(), user.getName(), user.getBirthday(), user.getId());
+        updateInDb(UPDATE_USER_QUERY, user.getEmail(), user.getLogin(), user.getName(), user.getBirthday(), user.getId());
         updateFriends(user,oldUser);
-        return findOne(FIND_BY_ID_QUERY, user.getId()).get();
+        return findOneInDb(FIND_BY_ID_QUERY, user.getId()).get();
     }
 
     @Override
     public Optional<User> getById(Long id) {
-        return findOne(FIND_BY_ID_QUERY, id);
+        return findOneInDb(FIND_BY_ID_QUERY, id);
     }
 
     @Override
     public Collection<User> findAll() {
-        return findMany(FIND_ALL_QUERY);
+        return findManyInDb(FIND_ALL_QUERY);
     }
 
     @Override
     public boolean isEmailRegistered(String email) {
-        return findOne(FIND_USER_BY_EMAIL_QUERY, email).isPresent();
+        return findOneInDb(FIND_USER_BY_EMAIL_QUERY, email).isPresent();
     }
 
     @Override
     public boolean isUserIdRegistered(Long userId) {
-        return findOne(FIND_BY_ID_QUERY, userId).isPresent();
+        return findOneInDb(FIND_BY_ID_QUERY, userId).isPresent();
     }
 
      private void updateFriends(User newUser, User oldUser) {
@@ -84,14 +84,14 @@ public class UserDbStorage extends CommonDbStorage<User> implements UserStorage 
         Set<Long> diffFriends = new HashSet<>(newUser.getFriendsId());
          diffFriends.removeAll(oldUser.getFriendsId());
         for (Long idFriend : diffFriends) {
-            update(ADD_FRIEND_QUERY, newUser.getId(), idFriend, true); // считаем подтвержденной по умолчанию
+            updateInDb(ADD_FRIEND_QUERY, newUser.getId(), idFriend, true); // считаем подтвержденной по умолчанию
         }
 
         // Удаление отсутствующих друзей
         diffFriends = new HashSet<>(oldUser.getFriendsId());
         diffFriends.removeAll(newUser.getFriendsId());
         for (Long idFriend : diffFriends) {
-            update(DEL_FRIEND_QUERY, newUser.getId(), idFriend);
+            updateInDb(DEL_FRIEND_QUERY, newUser.getId(), idFriend);
         }
     }
 

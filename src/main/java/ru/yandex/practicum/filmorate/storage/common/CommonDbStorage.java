@@ -19,7 +19,7 @@ public abstract class CommonDbStorage<T> {
     protected final JdbcTemplate jdbc;
     protected final RowMapper<T> mapper;
 
-    protected Optional<T> findOne(String query, Object... params) {
+    protected Optional<T> findOneInDb(String query, Object... params) {
         try {
             T result = jdbc.queryForObject(query, mapper, params);
             return Optional.ofNullable(result);
@@ -28,16 +28,16 @@ public abstract class CommonDbStorage<T> {
         }
     }
 
-    protected List<T> findMany(String query, Object... params) {
+    protected List<T> findManyInDb(String query, Object... params) {
         return jdbc.query(query, mapper, params);
     }
 
-    public boolean delete(String query, Object... params) {
+    public boolean deleteInDb(String query, Object... params) {
         int rowsDeleted = jdbc.update(query, params);
         return rowsDeleted > 0;
     }
 
-    protected long insert(String query, Object... params) {
+    protected long insertInDb(String query, Object... params) {
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbc.update(connection -> {
@@ -58,7 +58,7 @@ public abstract class CommonDbStorage<T> {
         }
     }
 
-    protected void update(String query, Object... params) {
+    protected void updateInDb(String query, Object... params) {
         int rowsUpdated = jdbc.update(query, params);
         if (rowsUpdated == 0) {
             throw new NotFoundException("Данные для обновления не найдены");
