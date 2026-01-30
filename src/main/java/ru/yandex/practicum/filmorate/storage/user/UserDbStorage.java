@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.storage.user;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.common.CommonDbStorage;
 import java.util.Collection;
@@ -35,21 +36,22 @@ public class UserDbStorage extends CommonDbStorage<User> implements UserStorage 
     private static final String ADD_FRIEND_QUERY = "INSERT INTO friend (user_id, friend_user_id, is_confirmed)" +
     "VALUES (?, ?, ?)";
     private static final String DEL_FRIEND_QUERY = "DELETE FROM friend WHERE user_id = ? AND friend_user_id = ?";
-    private static final String ADD_USER_QUERY ="INSERT INTO user_app (email, login, name, birthday) VALUES (?, ?, ?, ?)";
-
+    private static final String ADD_USER_QUERY = "INSERT INTO user_app (email, login, name, birthday) VALUES (?, ?, ?, ?)";
 
     public UserDbStorage(JdbcTemplate jdbc) {
         super(jdbc, new UserDbRowMapper());
     }
 
     @Override
+    @Transactional
     public User create(User user) {
         long id = insertInDb(ADD_USER_QUERY, user.getEmail(), user.getLogin(), user.getName(), user.getBirthday());
-        updateFriends( user, new User());
+        updateFriends(user, new User());
         return findOneInDb(FIND_BY_ID_QUERY, id).orElse(null);
     }
 
     @Override
+    @Transactional
     public User update(User user) {
 
         User oldUser = findOneInDb(FIND_BY_ID_QUERY, user.getId()).get();

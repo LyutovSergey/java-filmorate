@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -16,10 +15,10 @@ import java.util.Set;
 
 @Slf4j
 @Service
-        //@RequiredArgsConstructor
 public class UserService {
 
     private final UserStorage userStorage;
+
     @Autowired
     public UserService(@Qualifier("userDbStorage") UserStorage userStorage) {
         this.userStorage = userStorage;
@@ -64,13 +63,13 @@ public class UserService {
 
     public void addFriend(Long userId, Long friendUserId) {
        User user = getUserByIdOrThrow(userId);
-       User friendUser = getUserByIdOrThrow(friendUserId);
+       // User friendUser = getUserByIdOrThrow(friendUserId); // Дружба двухсторонняя
 
        user.addFriend(friendUserId);
-       friendUser.addFriend(userId);
+       // friendUser.addFriend(userId); // Дружба двухсторонняя
 
        userStorage.update(user);
-       userStorage.update(friendUser);
+       // userStorage.update(friendUser); // Дружба двухсторонняя
     }
 
     public void removeFriend(Long userId, Long friendUserId) {

@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.storage.film;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.common.CommonDbStorage;
@@ -9,14 +10,14 @@ import java.util.Collection;
 import java.util.Optional;
 
 @Repository("filmDbStorage")
-public class FilmDbStorage extends CommonDbStorage<Film>  implements FilmStorage{
+public class FilmDbStorage extends CommonDbStorage<Film> implements FilmStorage {
 
     private static final String FIND_ALL_QUERY = """
     SELECT
-    f.*,
-    mp.name AS mpa_name,
-    g_agg.genres_data,
-    l_agg.user_id_likes
+        f.*,
+        mp.name AS mpa_name,
+        g_agg.genres_data,
+        l_agg.user_id_likes
     FROM film f
     LEFT JOIN mpa_rating mp ON f.mpa_rating_id = mp.id
 -- Подзапрос для жанров
@@ -55,9 +56,10 @@ public class FilmDbStorage extends CommonDbStorage<Film>  implements FilmStorage
         super(jdbc, new FilmDbRowMapper());
     }
 
+    @Transactional
     @Override
     public Film create(Film film) {
-        long id = insertInDb (ADD_FILM_QUERY,
+        long id = insertInDb(ADD_FILM_QUERY,
                 film.getName(),
                 film.getDescription(),
                 film.getReleaseDate(),
@@ -69,6 +71,7 @@ public class FilmDbStorage extends CommonDbStorage<Film>  implements FilmStorage
         return findOneInDb(FIND_BY_ID_QUERY, id).get();
     }
 
+    @Transactional
     @Override
     public Film update(Film film) {
         updateInDb(UPDATE_FILM_QUERY,
@@ -98,16 +101,16 @@ public class FilmDbStorage extends CommonDbStorage<Film>  implements FilmStorage
         return findOneInDb(FIND_BY_ID_QUERY, filmId).isPresent();
     }
 
-    private void updateLikes(Film film){
+    private void updateLikes(Film film) {
         deleteInDb(DEL_LIKES_QUERY, film.getId());
-        for(long idUser:film.getUserIdLikes()) {
+        for (long idUser : film.getUserIdLikes()) {
             updateInDb(ADD_LIKE_QUERY, film.getId(), idUser);
         }
     }
 
-    private void updateGenres(Film film){
+    private void updateGenres(Film film) {
         deleteInDb(DEL_GENRES_QUERY, film.getId());
-        for(Genre genre:film.getGenres()) {
+        for (Genre genre : film.getGenres()) {
             updateInDb(ADD_GENRE_QUERY, film.getId(), genre.getId());
         }
     }
