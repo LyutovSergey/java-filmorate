@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import ru.yandex.practicum.filmorate.validator.DateEqualOrAfter;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Builder(toBuilder = true)
@@ -37,7 +38,7 @@ public class Film {
     private Mpa mpa;
 
     @Builder.Default
-    private Set<Genre> genres = new HashSet<>();
+    private Set<Genre> genres = new LinkedHashSet<>(); // Тесты требуют в определенном порядке вывод
 
     public void addUserLike(Long userId) {
         userIdLikes.add(userId);
@@ -50,7 +51,7 @@ public class Film {
     public Film copy() {
         return this.toBuilder()
                 .userIdLikes(new HashSet<>(this.userIdLikes))
-                .genres(new HashSet<>(this.genres))
+                .genres(new LinkedHashSet<>(this.genres))
                 .build();
     }
 }

@@ -25,7 +25,7 @@ public class MpaController {
         return mpaService.findAll();
     }
 
-    @GetMapping("/{genreId}")
+    @GetMapping("/{mpaId}")
     @ResponseStatus(HttpStatus.OK)
     public Mpa getById(@PathVariable Integer mpaId) {
         log.info("Get genre by id = {}", mpaId);

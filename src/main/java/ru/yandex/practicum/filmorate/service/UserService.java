@@ -74,13 +74,13 @@ public class UserService {
 
     public void removeFriend(Long userId, Long friendUserId) {
         User user = getUserByIdOrThrow(userId);
-        User friendUser = getUserByIdOrThrow(friendUserId);
+        //  User friendUser = getUserByIdOrThrow(friendUserId); // Дружба двухсторонняя
 
         user.removeFriend(friendUserId);
-        friendUser.removeFriend(userId);
+        //  friendUser.removeFriend(userId); // Дружба двухсторонняя
 
         userStorage.update(user);
-        userStorage.update(friendUser);
+        // userStorage.update(friendUser); // Дружба двухсторонняя
     }
 
     public Collection<User> getFriends(Long userId) {

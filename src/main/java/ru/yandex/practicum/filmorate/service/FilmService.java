@@ -77,7 +77,7 @@ public class FilmService {
                 .toList();
     }
 
-    private Film getFilmByIdOrThrow(Long filmId) {
+    public Film getFilmByIdOrThrow(Long filmId) {
         return filmStorage.getById(filmId)
                 .orElseThrow(() -> new NotFoundException("Film id = " + filmId + " not found"));
     }

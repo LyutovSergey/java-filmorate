@@ -53,7 +53,6 @@ public class UserDbStorage extends CommonDbStorage<User> implements UserStorage 
     @Override
     @Transactional
     public User update(User user) {
-
         User oldUser = findOneInDb(FIND_BY_ID_QUERY, user.getId()).get();
 
         updateInDb(UPDATE_USER_QUERY, user.getEmail(), user.getLogin(), user.getName(), user.getBirthday(), user.getId());

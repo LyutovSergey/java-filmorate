@@ -13,28 +13,30 @@ import java.util.Optional;
 public class FilmDbStorage extends CommonDbStorage<Film> implements FilmStorage {
 
     private static final String FIND_ALL_QUERY = """
-    SELECT
-        f.*,
-        mp.name AS mpa_name,
-        g_agg.genres_data,
-        l_agg.user_id_likes
-    FROM film f
-    LEFT JOIN mpa_rating mp ON f.mpa_rating_id = mp.id
--- Подзапрос для жанров
-    LEFT JOIN (
-            SELECT fg.film_id,
-            GROUP_CONCAT(g.id || ':' || g.name) AS genres_data
-    FROM film_genre fg
-    JOIN genre g ON fg.genre_id = g.id
-    GROUP BY fg.film_id
-) g_agg ON f.id = g_agg.film_id
--- Подзапрос для лайков
-    LEFT JOIN (
-            SELECT fl.film_id,
-            GROUP_CONCAT(fl.user_id) AS user_id_likes
-    FROM film_like fl
-    GROUP BY fl.film_id
-) l_agg ON f.id = l_agg.film_id
+   SELECT
+                   f.*,
+                   mp.name AS mpa_name,
+                   g_agg.genres_data,
+                   l_agg.user_id_likes
+               FROM film f
+               LEFT JOIN mpa_rating mp ON f.mpa_rating_id = mp.id
+               -- Subquery for genres with internal sorting
+               LEFT JOIN (
+                   SELECT
+                       fg.film_id,
+                       GROUP_CONCAT(g.id || ':' || g.name ORDER BY g.id ASC SEPARATOR ',') AS genres_data
+                   FROM film_genre fg
+                   JOIN genre g ON fg.genre_id = g.id
+                   GROUP BY fg.film_id
+               ) g_agg ON f.id = g_agg.film_id
+               -- Subquery for likes
+               LEFT JOIN (
+                   SELECT
+                       fl.film_id,
+                       GROUP_CONCAT(fl.user_id) AS user_id_likes
+                   FROM film_like fl
+                   GROUP BY fl.film_id
+               ) l_agg ON f.id = l_agg.film_id
 """;
     private static final String FIND_BY_ID_QUERY = FIND_ALL_QUERY + " WHERE f.id = ?";
     private static final String ADD_FILM_QUERY =  """
