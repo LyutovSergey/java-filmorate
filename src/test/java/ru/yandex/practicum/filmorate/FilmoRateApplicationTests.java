@@ -25,12 +25,12 @@ class FilmoRateApplicationTests {
 
 	@Test
 	public void testFindUserById() {
-		User userTest = User.builder().
-				id(1L).
-				login("test").
-				email("test@test.ru").
-				birthday(LocalDate.of(2000, 8, 20)).
-				build();
+		User userTest = User.builder()
+				.id(1L)
+				.login("test")
+				.email("test@test.ru")
+				.birthday(LocalDate.of(2000, 8, 20))
+				.build();
 		userStorage.create(userTest);
 
 		Optional<User> userOptional = userStorage.getById(1L);
