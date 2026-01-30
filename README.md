@@ -79,18 +79,20 @@ Ref: film.mpa_rating_id > mpa_rating.id [delete: restrict]
 
 ### Топ-10 фильмов по лайкам
 ```sql
-SELECT f.name, COUNT(l.user_id) AS likes_cnt
+SELECT f.id, f.name, COUNT(l.user_id) AS likes_cnt
 FROM film f
-LEFT JOIN film_like l ON f.id = l.film_id
-GROUP BY f.id ORDER BY likes_cnt DESC LIMIT 10;
+      LEFT JOIN film_like l ON f.id = l.film_id
+GROUP BY f.id, f.name -- Группируем по обоим полям для стандарта SQL
+ORDER BY likes_cnt DESC
+ LIMIT 10;
 ```
 ### Список друзей пользователя с логином Ivanov (подтвердивших дружбу)
 ```sql
-SELECT *
-FROM user u
-JOIN friend f ON u.id = f.friend_user_id
-JOIN user owner ON f.user_id = owner.id
-WHERE owner.login = 'Ivanov' 
+SELECT u.*
+FROM user_app u
+      JOIN friend f ON u.id = f.friend_user_id
+      JOIN user_app owner ON f.user_id = owner.id
+WHERE owner.login = 'Ivanov'
   AND f.is_confirmed = TRUE;
 ```
 ### Список фильмов с жанром Комедия
