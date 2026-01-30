@@ -37,6 +37,13 @@ public class AppExceptionHandler {
     }
 
     @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Map<String, String> handleDataIntegrityViolation(org.springframework.dao.DataIntegrityViolationException e) {
+        log.warn("Нарушение целостности данных: {}", e.getMessage());
+        return Map.of("error", "Нарушение ссылочной целостности в БД");
+    }
+
+    @ExceptionHandler
     @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
     public Map<String, String> defaultHandler(Exception e) {
         log.error("Произошла ошибка: {}, {}", e.toString(), e.getClass());

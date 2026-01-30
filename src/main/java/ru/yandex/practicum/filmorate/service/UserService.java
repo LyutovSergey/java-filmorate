@@ -74,7 +74,7 @@ public class UserService {
 
     public void removeFriend(Long userId, Long friendUserId) {
         User user = getUserByIdOrThrow(userId);
-        //  User friendUser = getUserByIdOrThrow(friendUserId); // Дружба двухсторонняя
+        getUserByIdOrThrow(friendUserId); // Проверка наличия друга, или 404
 
         user.removeFriend(friendUserId);
         //  friendUser.removeFriend(userId); // Дружба двухсторонняя
