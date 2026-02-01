@@ -32,7 +32,7 @@ public class UserDbRowMapper implements RowMapper<User> {
                 String[] parts = friendStr.split(":");
                 Long friendId = Long.parseLong(parts[0]);
                 // Boolean confirmed = Boolean.parseBoolean(parts[1]); // Статус, если нужен в модели
-                user.addFriend(friendId);
+                user.getFriendsId().add(friendId);
             }
         }
         return user;

@@ -10,8 +10,6 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 @Slf4j
 @Service
@@ -31,14 +29,9 @@ public class UserService {
         }
 
         Long userId = newUser.getId();
-
-        User oldUser = userStorage.getById(userId)
-                .orElseThrow(() -> {
-                    log.info("User update failed! Id={} not found", userId);
-                    return new NotFoundException("User id = " + userId + " not found");
-                });
-
+        User oldUser = getUserByIdOrThrow(userId);
         String newUserEmail = newUser.getEmail();
+
         if (!oldUser.getEmail().equals(newUserEmail)) {
             if (userStorage.isEmailRegistered(newUserEmail)) {
                 log.info("User update failed! Email={} is already in use", newUserEmail);
@@ -46,7 +39,6 @@ public class UserService {
             }
         }
         return userStorage.update(newUser);
-
     }
 
     public User create(User user) {
@@ -62,43 +54,26 @@ public class UserService {
     }
 
     public void addFriend(Long userId, Long friendUserId) {
-       User user = getUserByIdOrThrow(userId);
-       // User friendUser = getUserByIdOrThrow(friendUserId); // Дружба двухсторонняя
-
-       user.addFriend(friendUserId);
-       // friendUser.addFriend(userId); // Дружба двухсторонняя
-
-       userStorage.update(user);
-       // userStorage.update(friendUser); // Дружба двухсторонняя
+        userIdRegisteredOrThrow(userId);
+        userIdRegisteredOrThrow(friendUserId); // Проверка наличия друга, или 404
+        userStorage.addFriend(userId, friendUserId);
     }
 
     public void removeFriend(Long userId, Long friendUserId) {
-        User user = getUserByIdOrThrow(userId);
-        getUserByIdOrThrow(friendUserId); // Проверка наличия друга, или 404
-
-        user.removeFriend(friendUserId);
-        //  friendUser.removeFriend(userId); // Дружба двухсторонняя
-
-        userStorage.update(user);
-        // userStorage.update(friendUser); // Дружба двухсторонняя
+        userIdRegisteredOrThrow(userId);
+        userIdRegisteredOrThrow(friendUserId); // Проверка наличия друга, или 404
+        userStorage.removeFriend(userId, friendUserId);
     }
 
     public Collection<User> getFriends(Long userId) {
-        User user = getUserByIdOrThrow(userId);
-        return user.getFriendsId().stream()
-                .map(friendId -> getUserByIdOrThrow(friendId, "User friend id = " + friendId + " not found"))
-                .toList();
+        userIdRegisteredOrThrow(userId);
+        return userStorage.getFriends(userId);
     }
 
     public Collection<User> getCommonFriends(Long userId, Long otherUserId) {
-        User user = getUserByIdOrThrow(userId);
-        User otherUser = getUserByIdOrThrow(otherUserId);
-        Set<Long> commonFriendsId = new HashSet<>(user.getFriendsId());
-
-        commonFriendsId.retainAll(otherUser.getFriendsId());
-        return commonFriendsId.stream()
-                .map(friendId -> getUserByIdOrThrow(friendId, "User friend id = " + friendId + " not found"))
-                .toList();
+        userIdRegisteredOrThrow(userId);
+        userIdRegisteredOrThrow(otherUserId);
+        return userStorage.getCommonFriends(userId, otherUserId);
     }
 
     private User getUserByIdOrThrow(Long userId) {
@@ -106,8 +81,9 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundException("User id = " + userId + " not found"));
     }
 
-    private User getUserByIdOrThrow(Long userId, String errorMessage) {
-        return userStorage.getById(userId)
-                .orElseThrow(() -> new NotFoundException(errorMessage));
+    private void userIdRegisteredOrThrow(Long userId) {
+         if (!userStorage.isUserIdRegistered(userId)) {
+             throw new NotFoundException("User id = " + userId + " not found");
+         }
     }
 }

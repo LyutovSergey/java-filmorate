@@ -46,8 +46,9 @@ public class FilmDbRowMapper implements RowMapper<Film> {
 
         if (likes != null && !likes.isBlank()) {
             Arrays.stream(likes.split(","))
+                    .map(String::trim) // Убираем лишние пробелы, если они есть
                     .map(Long::valueOf)
-                    .forEach(film::addUserLike);
+                    .forEach(id -> film.getUserIdLikes().add(id));
         }
         return film;
     }

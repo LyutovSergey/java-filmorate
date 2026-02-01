@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Mpa {
-    @Positive(message = "mpaId не может быть отрицательным")
+    @Positive (message = "mpaId не может быть отрицательным")
     private Integer id;
     private String name;
 }

@@ -40,14 +40,6 @@ public class Film {
     @Builder.Default
     private Set<Genre> genres = new LinkedHashSet<>(); // Тесты требуют в определенном порядке вывод
 
-    public void addUserLike(Long userId) {
-        userIdLikes.add(userId);
-    }
-
-    public void removeUserLike(Long userId) {
-        userIdLikes.remove(userId);
-    }
-
     public Film copy() {
         return this.toBuilder()
                 .userIdLikes(new HashSet<>(this.userIdLikes))

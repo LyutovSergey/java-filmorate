@@ -65,4 +65,8 @@ public abstract class CommonDbStorage<T> {
         }
     }
 
+    protected boolean isExistsInDb(String query, Object... params) {
+        return jdbc.queryForObject(query, Boolean.class, params);
+    }
+
 }

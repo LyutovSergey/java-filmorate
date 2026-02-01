@@ -14,9 +14,16 @@ public interface UserStorage {
 
     Collection<User> findAll();
 
-    // Методы в хранилище для оптимизации выполнения программы
     boolean isEmailRegistered(String email);
 
     boolean isUserIdRegistered(Long userId);
+
+    void removeFriend(Long userId, Long friendUserId);
+
+    void addFriend(Long userId, Long friendUserId);
+
+    Collection<User> getCommonFriends(Long userId, Long otherUserId);
+
+    Collection<User> getFriends(Long userId);
 }
 

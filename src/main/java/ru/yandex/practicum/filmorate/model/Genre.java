@@ -13,6 +13,5 @@ import lombok.NoArgsConstructor;
 public class Genre {
     @Positive(message = "genreId не может быть отрицательным")
     private Integer id;
-
     private String name;
 }
