@@ -1,12 +1,15 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.storage.user;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.common.IdGenerator;
+
 import java.util.*;
 
 @Slf4j
-@Repository
+@Repository("inMemoryUserStorageImpl")
 public class
 InMemoryUserStorageImpl implements UserStorage {
 
@@ -61,5 +64,41 @@ InMemoryUserStorageImpl implements UserStorage {
     @Override
     public boolean isUserIdRegistered(Long userId) {
         return users.containsKey(userId);
+    }
+
+    @Override
+    public void removeFriend(Long userId, Long friendUserId) {
+        User user = users.get(userId);
+        if (!user.getFriendsId().remove(friendUserId)) {
+            throw new NotFoundException("User id = " + userId + " not have friend id = " + friendUserId);
+        }
+
+    }
+
+    @Override
+    public void addFriend(Long userId, Long friendUserId) {
+        users.get(userId).getFriendsId().add(friendUserId);
+
+    }
+
+    @Override
+    public Collection<User> getCommonFriends(Long userId, Long otherUserId) {
+        User user = users.get(userId);
+        User otherUser = users.get(otherUserId);
+        Set<Long> commonFriendsId = new HashSet<>(user.getFriendsId());
+
+        commonFriendsId.retainAll(otherUser.getFriendsId());
+        return commonFriendsId.stream()
+                .map(users::get)
+                .map(User::copy)
+                .toList();
+    }
+
+    @Override
+    public Collection<User> getFriends(Long userId) {
+        return users.get(userId).getFriendsId().stream()
+                .map(users::get)
+                .map(User::copy)
+                .toList();
     }
 }

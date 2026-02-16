@@ -5,7 +5,10 @@ import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.storage.*;
+import ru.yandex.practicum.filmorate.storage.common.IdGenerator;
+import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorageImpl;
+import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorageImpl;
+
 import java.time.LocalDate;
 import java.util.Collection;
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,7 +32,7 @@ class FilmControllerTest {
         validFilm.setName("Название");
         validFilm.setDescription("Описание");
         validFilm.setReleaseDate(LocalDate.of(2000, 1, 1));
-        validFilm.setDuration(120);
+        validFilm.setDuration(120L);
     }
 
     @Test
@@ -62,7 +65,7 @@ class FilmControllerTest {
         updatedFilm.setName("Обновленное название");
         updatedFilm.setDescription("Обновленное описание");
         updatedFilm.setReleaseDate(LocalDate.of(2011, 1, 1));
-        updatedFilm.setDuration(90);
+        updatedFilm.setDuration(90L);
 
         Film resultFilm = filmController.update(updatedFilm);
         assertEquals(updatedFilm, resultFilm, "Ответ контроллера не соответствует обновленному фильму");

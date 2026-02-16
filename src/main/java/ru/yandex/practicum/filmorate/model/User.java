@@ -38,14 +38,6 @@ public class User {
         }
     }
 
-    public void addFriend(Long userId) {
-        friendsId.add(userId);
-    }
-
-    public void removeFriend(Long userId) {
-        friendsId.remove(userId);
-    }
-
     public User copy() {
         return this.toBuilder()
                 .friendsId(new HashSet<>(this.friendsId))

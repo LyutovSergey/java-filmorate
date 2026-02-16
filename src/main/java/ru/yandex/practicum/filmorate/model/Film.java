@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import ru.yandex.practicum.filmorate.validator.DateEqualOrAfter;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Builder(toBuilder = true)
@@ -28,22 +29,21 @@ public class Film {
     private LocalDate releaseDate;
 
     @Positive(message = "duration не может быть отрицательным")
-    private int duration; // Судя по коллекции, предполагалось использовать именно числовое значение
+    private Long duration; // Судя по коллекции, предполагалось использовать именно числовое значение
 
     @Builder.Default
     private Set<Long> userIdLikes = new HashSet<>();
 
-    public void addUserLike(Long userId) {
-        userIdLikes.add(userId);
-    }
+    @NotNull
+    private Mpa mpa;
 
-    public void removeUserLike(Long userId) {
-        userIdLikes.remove(userId);
-    }
+    @Builder.Default
+    private Set<Genre> genres = new LinkedHashSet<>(); // Тесты требуют в определенном порядке вывод
 
     public Film copy() {
         return this.toBuilder()
                 .userIdLikes(new HashSet<>(this.userIdLikes))
+                .genres(new LinkedHashSet<>(this.genres))
                 .build();
     }
 }
